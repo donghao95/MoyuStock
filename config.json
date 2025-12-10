@@ -1,0 +1,26 @@
+{
+    "refresh_interval": 3,
+    "window": {
+        "mode": "expanded",
+        "mini_pos": [
+            25,
+            718
+        ],
+        "expanded_pos": [
+            485,
+            185
+        ],
+        "mini_opacity": 0.8,
+        "expanded_width": 900,
+        "expanded_height": 600,
+        "theme": "light"
+    },
+    "stocks": [
+        "01880",
+        "601888"
+    ],
+    "hotkeys": {
+        "toggle_visibility": "alt+s",
+        "switch_mode": "alt+d"
+    }
+}

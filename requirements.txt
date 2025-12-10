@@ -1,0 +1,6 @@
+requests==2.31.0
+PySide6==6.6.1
+plyer==2.1.0
+pyqtgraph==0.13.3
+curl_cffi==0.13.0
+keyboard==0.13.5
