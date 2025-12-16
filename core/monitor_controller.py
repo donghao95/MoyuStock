@@ -68,6 +68,7 @@ class MonitorController(QObject):
         
         self.timer.timeout.connect(self._on_timer_tick)
         self.is_running = False
+        self.is_paused = False
 
     def start_monitoring(self):
         interval = self.config.get_refresh_interval() * 1000
@@ -81,6 +82,9 @@ class MonitorController(QObject):
 
     def _on_timer_tick(self):
         # We need to run this in a background thread to avoid freezing UI
+        if self.is_paused:
+            return
+
         # Simple implementation: Use a Thread class for the fetch job
         # Note: In production code we should reuse threads.
         import threading
@@ -88,7 +92,16 @@ class MonitorController(QObject):
         t.daemon = True
         t.start()
 
+    def toggle_pause(self):
+        """切换暂停状态"""
+        self.is_paused = not self.is_paused
+        logger.info(f"Monitor paused: {self.is_paused}")
+        return self.is_paused
+
     def _fetch_job(self):
+        if self.is_paused:
+            return
+
         codes = self.config.get_stocks()
         if not codes:
             logger.debug("No stocks to fetch")
@@ -99,7 +112,7 @@ class MonitorController(QObject):
         results = {}
         failed = []
         for code in codes:
-            if not self.is_running: break
+            if not self.is_running or self.is_paused: break
             res = self.api_client.fetch_quote(code)
             if res.get("success"):
                 results[code] = res["data"]

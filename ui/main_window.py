@@ -150,6 +150,12 @@ class MainWindow(QMainWindow):
 
         footer_layout.addStretch()
         
+        # 暂停按钮
+        self.btn_pause = QPushButton("⏸ 暂停")
+        self.btn_pause.setCheckable(True)
+        self.btn_pause.clicked.connect(self._on_pause_click)
+        footer_layout.addWidget(self.btn_pause)
+
         # 手动刷新按钮
         self.btn_refresh = QPushButton("🔄 立即刷新")
         self.btn_refresh.clicked.connect(self._manual_refresh)
@@ -236,6 +242,19 @@ class MainWindow(QMainWindow):
     def _restore_refresh_btn(self):
         self.btn_refresh.setText("🔄 立即刷新")
         self.btn_refresh.setEnabled(True)
+
+    def _on_pause_click(self):
+        is_paused = self.controller.toggle_pause()
+        if is_paused:
+            self.btn_pause.setText("▶ 继续")
+            self.btn_pause.setChecked(True)
+            self.last_update_label.setText("已暂停更新")
+        else:
+            self.btn_pause.setText("⏸ 暂停")
+            self.btn_pause.setChecked(False)
+            self.last_update_label.setText("等待更新...")
+            # Resume immediately
+            self.controller._on_timer_tick()
 
     def _init_table_rows(self):
         self.table.setSortingEnabled(False)

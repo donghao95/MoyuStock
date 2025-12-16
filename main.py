@@ -26,16 +26,25 @@ class HotkeyListener(QObject):
             
             toggle_key = hotkeys.get("toggle_visibility", "alt+s")
             if toggle_key:
-                keyboard.add_hotkey(toggle_key, self.on_toggle)
+                try:
+                    # suppress=False allowed event to pass through
+                    keyboard.add_hotkey(toggle_key, self.on_toggle, suppress=False)
+                    logging.info(f"Registered hotkey: {toggle_key}")
+                except Exception as e:
+                    logging.error(f"Failed to bind {toggle_key}: {e}")
             
             switch_key = hotkeys.get("switch_mode", "alt+m")
             if switch_key:
-                keyboard.add_hotkey(switch_key, self.on_switch_mode)
+                try:
+                    keyboard.add_hotkey(switch_key, self.on_switch_mode, suppress=False)
+                    logging.info(f"Registered hotkey: {switch_key}")
+                except Exception as e:
+                    logging.error(f"Failed to bind {switch_key}: {e}")
                 
         except ImportError:
-            pass
+            logging.error("keyboard module not found")
         except Exception as e:
-            print(f"Failed to set hotkeys: {e}")
+            logging.error(f"Failed to reload hotkeys: {e}")
 
     def on_toggle(self):
         self.toggle_requested.emit()
